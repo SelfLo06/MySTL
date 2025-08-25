@@ -146,6 +146,7 @@ namespace TestMyLinkedList {
 
 
     void run_all_tests() {
+        TestRunner::reset();
         TestRunner::print_separator("MyLinkedList Tests");
         TestRunner::run_test("Constructor and Empty Test", test_constructor_and_empty);
         TestRunner::run_test("Push Back Test", test_push_back);

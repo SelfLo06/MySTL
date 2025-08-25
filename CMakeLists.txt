@@ -24,5 +24,10 @@ add_executable(MySTL
         include/MyBST.h
         tests/mybst/test_mybst.h
         tests/mybst/test_mybst.cpp
+        include/MyQueue-new/MyQueue-new.h
+        include/MyQueue-new/MyQueue-new.cpp
+        tests/myqueue-new/test_myqueue_new.h
+        tests/myqueue-new/test_myqueue_new.cpp
+        include/MyHashMap.h
         # 未来可以添加：tests/mylist/test_mylist.cpp
 )

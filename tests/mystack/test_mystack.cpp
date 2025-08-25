@@ -38,6 +38,7 @@ namespace TestMyStack {
     }
 
     void run_all_tests() {
+        TestRunner::reset();
         TestRunner::print_separator("MyStack Tests");
         TestRunner::run_test("Stack Operations Test", test_stack_operations);
         TestRunner::print_summary();

@@ -37,6 +37,7 @@ namespace TestMyQueue {
     }
 
     void run_all_tests() {
+        TestRunner::reset();
         TestRunner::print_separator("MyQueue Tests");
         TestRunner::run_test("Queue Operations Test", test_queue_operations);
         TestRunner::print_summary();

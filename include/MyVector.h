@@ -44,6 +44,9 @@ public:
 
     // 构造与析构
     MyVector();
+    explicit MyVector(size_t count);
+    // explicit 关键字用在单参数的构造函数（或者多参数但其他参数都有默认值的构造函数）前面。
+    // 它的唯一作用就是禁止编译器使用这个构造函数来进行隐式的类型转换。
     MyVector(const MyVector& other); // 拷贝构造函数
     MyVector& operator=(const MyVector& other); // 拷贝赋值运算符
     ~MyVector();
@@ -52,6 +55,7 @@ public:
     size_t size() const { return _size; }
     size_t capacity() const { return _capacity; }
     bool empty() const;
+    void resize(size_t new_size);
 
     // 元素访问
     T& operator[](size_t index);
@@ -73,14 +77,12 @@ public:
 
     iterator begin() {
         // begin() 应该返回一个指向第一个元素的迭代器
-        // 如何用 _data 创建一个迭代器？
         return iterator(_data);
     }
 
     iterator end() {
         // end() 应该返回一个指向“尾后”位置的迭代器
         // 这个位置是最后一个元素的下一个位置。这是STL的惯例。
-        // 思考：如果 _data 指向开始，_size 是元素个数，那么尾后位置的指针是什么？
         return iterator(_data + _size);
     }
 
@@ -108,7 +110,14 @@ MyVector<T>::MyVector() : _data(nullptr), _size(0), _capacity(0) {
     std::cout << "Default constructor called!" << std::endl;
 }
 
-// In MyVector.h, after the destructor's implementation
+template<typename T>
+MyVector<T>::MyVector(size_t count) : _data(nullptr),_size(count),_capacity(count){
+
+    if (count > 0) _data = new T[count];
+
+    std::cout << "Default constructor with size_t called!" << std::endl;
+}
+
 template <typename T>
 MyVector<T>::MyVector(const MyVector& other)
     // C++ 推荐使用成员初始化列表来初始化成员变量
@@ -223,5 +232,22 @@ void MyVector<T>::clear() {
     _size = 0;
 }
 
+template<typename T>
+// 注意这个函数的功能只是为了扩容! 所以扩容的部分需要填上默认值!
+void MyVector<T>::resize(size_t new_size) {
+    if (new_size > _capacity) {
+        // 1. 如果新大小超过了当前容量，我们需要扩容
+        //    通常扩容策略是扩到 max(new_size, _capacity * 2)
+        _resize(std::max(new_size,_capacity * 2));
+    }
+    if (new_size > _size) {
+        // 2. 如果新大小大于当前大小，需要默认构造新的元素
+        //    T() 会调用 T 类型的默认构造函数
+        for (size_t i = _size; i < new_size; i++) {
+            _data[i] = T();
+        }
+    }
+    _size = new_size;
+}
 
 #endif

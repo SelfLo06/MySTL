@@ -150,6 +150,7 @@ namespace TestMyVector {
     }
 
     void run_all_tests() {
+        TestRunner::reset();
         TestRunner::print_separator("MyVector Tests");
         TestRunner::run_test("Constructor Test", test_constructor);
         TestRunner::run_test("Push Back Test", test_push_back);

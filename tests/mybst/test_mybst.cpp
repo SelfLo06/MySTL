@@ -76,6 +76,7 @@ namespace TestMyBST {
     }
 
     void run_all_tests() {
+        TestRunner::reset();
         TestRunner::print_separator("MyBST Tests");
         TestRunner::run_test("Insert and Find Test", test_insert_and_find);
         TestRunner::run_test("Traversals Test", test_traversals);
