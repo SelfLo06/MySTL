@@ -29,5 +29,7 @@ add_executable(MySTL
         tests/myqueue-new/test_myqueue_new.h
         tests/myqueue-new/test_myqueue_new.cpp
         include/MyHashMap.h
+        tests/myhashmap/test_myhashmap.h
+        tests/myhashmap/test_myhashmap.cpp
         # 未来可以添加：tests/mylist/test_mylist.cpp
 )

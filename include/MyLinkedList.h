@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iostream>
 #include <stdexcept> // for std::out_of_range
+#include <bits/regex_constants.h>
 
 template <typename T>
 class MyLinkedList {
@@ -46,8 +47,40 @@ public:
         bool operator==(const iterator& other) const;
         bool operator!=(const iterator& other) const;
 
+        // 我们需要让迭代器能被解引用为 Node*，或者提供一个 getNode() 方法
+        // 为了简单，我们暂时让迭代器能返回 Node*
+        Node* getNode() const { return _node_ptr; }
+
     private:
         Node* _node_ptr; // 迭代器内部封装的是一个 Node 指针
+    };
+
+    // 常量迭代器(必须)
+    class const_iterator {
+    public:
+        // 构造函数
+        const_iterator(const Node* ptr);
+        // 从普通迭代器转换的构造函数
+        const_iterator(const iterator& it);
+
+        // 解引用 (*it)，返回节点数据的 const 引用
+        const T& operator*() const;
+
+        // 成员访问 (it->member)，返回 const 指针
+        const T* operator->() const;
+
+        // 前缀递增 (++it)
+        const_iterator& operator++();
+
+        // 前缀递减 (--it)
+        const_iterator& operator--();
+
+        // 比较操作
+        bool operator==(const const_iterator& other) const;
+        bool operator!=(const const_iterator& other) const;
+
+    private:
+        const Node* _node_ptr; // 指向 const Node 的指针
     };
 
     // 反向迭代器
@@ -99,10 +132,18 @@ public:
     void pop_back();
 
     iterator begin();
+    const_iterator begin() const; // const 重载
     iterator end();
+    const_iterator end() const;   // const 重载
+
+    const_iterator cbegin() const;
+    const_iterator cend() const;
 
     reverse_iterator rbegin();
     reverse_iterator rend();
+
+    iterator erase(iterator pos); //  按照 STL 惯例，它应该返回被删除元素的下一个元素的迭代器
+
 };
 
 
@@ -154,6 +195,113 @@ bool MyLinkedList<T>::iterator::operator==(const iterator& other) const {
 template <typename T>
 bool MyLinkedList<T>::iterator::operator!=(const iterator& other) const {
     return _node_ptr != other._node_ptr;
+}
+
+template <typename T>
+typename MyLinkedList<T>::iterator MyLinkedList<T>::erase(iterator pos) {
+    // 0. 获取要删除的节点指针
+    Node* node_to_delete = pos.getNode();
+    if (node_to_delete == nullptr) {
+        return end(); // 不能删除 end()
+    }
+
+    // 1. 获取返回值：下一个节点的迭代器
+    iterator next_it(node_to_delete->next);
+
+    Node* prev_node = node_to_delete->prev;
+    Node* next_node = node_to_delete->next;
+
+    // 2. “飞线”操作：将前后节点链接起来
+    // 如果有前驱节点
+    if (prev_node) {
+        prev_node->next = next_node;
+    }else {
+        // 如果删除的是头节点
+        _head = next_node;
+    }
+    // 如果有后继节点
+    if (next_node) {
+        next_node->prev = prev_node;
+    } else {
+        // 如果删除的是尾节点
+        _tail = prev_node;
+    }
+
+    // 3. 释放内存并更新大小
+    delete node_to_delete;
+    _size--;
+
+    // 4. 返回下一个节点的迭代器
+    return next_it;
+}
+
+// ------------------- 常量迭代器实现(必须) -------------------
+
+// 构造函数
+template <typename T>
+MyLinkedList<T>::const_iterator::const_iterator(const Node* ptr) : _node_ptr(ptr) {}
+
+// 从普通迭代器转换的构造函数
+template <typename T>
+MyLinkedList<T>::const_iterator::const_iterator(const iterator& it) : _node_ptr(it.getNode()) {}
+
+// 解引用 (*it)
+template <typename T>
+const T& MyLinkedList<T>::const_iterator::operator*() const {
+    return _node_ptr->data;
+}
+
+// 成员访问 (it->member)
+template <typename T>
+const T* MyLinkedList<T>::const_iterator::operator->() const {
+    return &(_node_ptr->data);
+}
+
+// 前缀递增 (++it)
+template <typename T>
+typename MyLinkedList<T>::const_iterator& MyLinkedList<T>::const_iterator::operator++() {
+    _node_ptr = _node_ptr->next;
+    return *this;
+}
+
+// 前缀递减 (--it)
+template <typename T>
+typename MyLinkedList<T>::const_iterator& MyLinkedList<T>::const_iterator::operator--() {
+    _node_ptr = _node_ptr->prev;
+    return *this;
+}
+
+// 比较操作
+template <typename T>
+bool MyLinkedList<T>::const_iterator::operator==(const const_iterator& other) const {
+    return _node_ptr == other._node_ptr;
+}
+
+template <typename T>
+bool MyLinkedList<T>::const_iterator::operator!=(const const_iterator& other) const {
+    return _node_ptr != other._node_ptr;
+}
+
+// ------------------- begin/end/cbegin/cend 实现 -------------------
+
+template <typename T>
+typename MyLinkedList<T>::const_iterator MyLinkedList<T>::begin() const {
+    return const_iterator(_head);
+}
+
+template <typename T>
+typename MyLinkedList<T>::const_iterator MyLinkedList<T>::end() const {
+    return const_iterator(nullptr);
+}
+
+template <typename T>
+typename MyLinkedList<T>::const_iterator MyLinkedList<T>::cbegin() const {
+    return begin(); // 直接调用 const 版本的 begin()
+}
+
+template <typename T>
+typename MyLinkedList<T>::const_iterator MyLinkedList<T>::cend() const {
+    return end(); // 直接调用 const 版本的 end()
 }
 
 // ------------------- 反向迭代器实现 -------------------

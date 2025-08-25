@@ -44,12 +44,115 @@ public:
     explicit MyHashMap(size_t bucket_count = 16)
         : _size(0)
     {
-        // 思考：如何将 _buckets 初始化为 bucket_count 个空的链表？
-        // 你可能需要为 MyVector 添加一个新的构造函数或 resize 方法
-        // MyVector(size_t count, const T& value)
-        // 或者 MyVector::resize(size_t count)
-        _buckets.resize(bucket_count); // 假设 MyVector 有一个 resize 方法
+        _buckets.resize(bucket_count);
     }
+
+    void insert(const K& key, const V& value);
+    V& operator[](const K& key);
+
+    size_t size() const { return _size; }
+
+    //根据 key 查找，如果找到了，返回一个指向 value 的指针；如果没找到，返回 nullptr。
+    V* find(const K& key);
+    const V* find(const K& key) const;
+
+    bool erase(const K &key);
 };
 
-#endif // MYHASHMAP_H
+template <typename K, typename V>
+V* MyHashMap<K, V>::find(const K& key) {
+    size_t bucket_index = _get_bucket_index(key);
+    MyLinkedList<Node>& bucket = _buckets[bucket_index];
+
+    // 遍历桶
+    for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+        if (it.getNode()->data.key == key) {
+            // 找到了！返回这个节点 value 的地址
+            return  &it.getNode()->data.value;
+        }
+    }
+    // 循环结束了还没找到，返回空指针
+    return nullptr;
+}
+
+template <typename K, typename V>
+const V* MyHashMap<K, V>::find(const K& key) const {
+    size_t bucket_index = _get_bucket_index(key);
+    const MyLinkedList<Node>& bucket = _buckets[bucket_index];
+
+    // 遍历桶
+    for (auto it = bucket.cbegin(); it != bucket.cend(); ++it) {
+        if (it.getNode()->data.key == key) {
+            // 找到了！返回这个节点 value 的地址
+            return  &it.getNode()->data.value;
+        }
+    }
+    // 循环结束了还没找到，返回空指针
+    return nullptr;
+}
+
+template <typename K, typename V>
+void MyHashMap<K, V>::insert(const K& key, const V& value) {
+    // 1. 获取桶的索引和桶本身
+    size_t bucket_index = _get_bucket_index(key);
+    MyLinkedList<Node>& bucket = _buckets[bucket_index];
+
+    // 2. 遍历桶，寻找key
+    for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+        if (it.getNode()->data.key == key) {
+
+            // 3. 如果找到了，说明 key 已存在
+            //    更新这个节点的 value，然后就可以结束函数了
+            it.getNode()->data.value = value;
+            return;
+        }
+    }
+
+    // 4. 如果 for 循环正常结束了，说明 key 不存在
+    //    在桶的末尾添加一个新的 Node
+    bucket.push_back(Node(key,value));
+
+    // 5. 只有在真正添加了新节点时，才需要增加 _size
+    _size++;
+}
+
+template <typename K, typename V>
+V& MyHashMap<K, V>::operator[](const K& key) {
+    // 1. 获取桶的索引和桶本身
+    size_t bucket_index = _get_bucket_index(key);
+    MyLinkedList<Node>& bucket = _buckets[bucket_index];
+
+    // 2. 遍历桶，寻找 key
+    for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+        if (it.getNode()->data.key == key) {
+            return it.getNode()->data.value;
+        }
+    }
+
+    // 4. 如果循环结束了还没找到：
+    //    A. 在桶的末尾插入一个新节点，其 value 为 V 类型的默认值 (V())。
+    bucket.push_back(Node(key,V()));
+
+    //    B. 增加 _size
+    _size++;
+
+    //    C. 返回这个刚刚被创建的新节点的 value 的引用。
+    return bucket.back().value;
+}
+
+template <typename K, typename V>
+bool MyHashMap<K, V>::erase(const K& key) {
+    size_t bucket_index = _get_bucket_index(key);
+    MyLinkedList<Node>& bucket = _buckets[bucket_index];
+
+    for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+        if (it.getNode()->data.key == key) {
+            bucket.erase(it);
+            _size--;
+            return true;
+        }
+    }
+    return false;
+}
+
+#endif
