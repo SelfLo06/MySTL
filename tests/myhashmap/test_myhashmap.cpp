@@ -83,11 +83,61 @@ namespace TestMyHashMap {
         assert(map.find("three") == nullptr);
     }
 
+    // ... test_find_and_erase() ...
+
+    void test_rehash() {
+        // 我们的 MAX_LOAD_FACTOR 是 0.75
+        // 构造一个初始桶数为 4 的 map
+        // 当 size 达到 4 * 0.75 = 3 时，下一次 insert (size变为4) 就会触发 rehash
+        MyHashMap<int, std::string> map(4);
+        assert(map.bucket_count() == 4);
+
+        map.insert(1, "one");
+        map.insert(2, "two");
+        map.insert(3, "three");
+
+        // 此时 size = 3, load_factor = 3/4 = 0.75. 还没触发
+        assert(map.size() == 3);
+        assert(map.bucket_count() == 4);
+        assert(*map.find(1) == "one");
+
+        // 这一步 insert 将使 size 变为 4, load_factor = 4/4 = 1.0 > 0.75
+        // 它应该会触发 rehash
+        map.insert(4, "four");
+
+        // 验证 rehash 是否发生
+        assert(map.size() == 4);
+        assert(map.bucket_count() == 8); // 桶数应该已经翻倍
+
+        // 验证 rehash 后，所有旧数据和新数据都依然存在且正确
+        assert(*map.find(1) == "one");
+        assert(*map.find(2) == "two");
+        assert(*map.find(3) == "three");
+        assert(*map.find(4) == "four");
+        assert(map[1] == "one"); // 也用 operator[] 测试一下
+
+        // 继续插入，测试第二次 rehash
+        // 当前 bucket_count = 8, 临界 size = 8 * 0.75 = 6
+        // 我们需要再插入 3 个元素来触发
+        map.insert(5, "five");
+        map.insert(6, "six");
+        map.insert(7, "seven"); // 这一步 size 变为 7, load_factor = 7/8 > 0.75
+
+        assert(map.size() == 7);
+        assert(map.bucket_count() == 16); // 桶数再次翻倍
+
+        // 再次全面验证
+        assert(*map.find(1) == "one");
+        assert(*map.find(7) == "seven");
+        assert(map[4] == "four");
+    }
+
     void run_all_tests() {
         TestRunner::reset();
         TestRunner::print_separator("MyHashMap Tests");
         TestRunner::run_test("Insert and Access Test", test_insert_and_access);
         TestRunner::run_test("Find and Erase Test", test_find_and_erase);
+        TestRunner::run_test("Rehash Test", test_rehash); // <-- 新增
         TestRunner::print_summary();
         TestRunner::print_separator("MyHashMap Tests Complete");
     }

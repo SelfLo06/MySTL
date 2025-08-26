@@ -39,6 +39,9 @@ private:
         return hasher(key) % _buckets.size();
     }
 
+    static constexpr double MAX_LOAD_FACTOR = 0.75; // 负载因子 (Load Factor)
+    void _rehash();
+
 public:
     // 构造函数：初始化桶数组
     explicit MyHashMap(size_t bucket_count = 16)
@@ -57,6 +60,10 @@ public:
     const V* find(const K& key) const;
 
     bool erase(const K &key);
+
+    size_t bucket_count() const {
+        return _buckets.size();
+    }
 };
 
 template <typename K, typename V>
@@ -114,6 +121,11 @@ void MyHashMap<K, V>::insert(const K& key, const V& value) {
 
     // 5. 只有在真正添加了新节点时，才需要增加 _size
     _size++;
+
+    // 检查是否需要动态扩容
+    if (static_cast<double>(_size) / _buckets.size() > MAX_LOAD_FACTOR) {
+        _rehash();
+    }
 }
 
 template <typename K, typename V>
@@ -137,6 +149,10 @@ V& MyHashMap<K, V>::operator[](const K& key) {
     _size++;
 
     //    C. 返回这个刚刚被创建的新节点的 value 的引用。
+    // 检查是否需要动态扩容
+    if (static_cast<double>(_size) / _buckets.size() > MAX_LOAD_FACTOR) {
+        _rehash();
+    }
     return bucket.back().value;
 }
 
@@ -153,6 +169,31 @@ bool MyHashMap<K, V>::erase(const K& key) {
         }
     }
     return false;
+}
+
+template <typename K, typename V>
+void MyHashMap<K, V>::_rehash() {
+    // 1. 计算新桶数并创建一个新的桶数组
+    size_t new_bucket_count = _buckets.size() * 2;
+    MyVector<MyLinkedList<Node>> new_buckets(new_bucket_count);
+
+    // 2. 遍历旧的桶数组 (_buckets)
+    for (size_t i = 0; i < _buckets.size(); i++) {
+        for (auto it= _buckets[i].begin(); it != _buckets[i].end(); ++it) {
+            // 3. 遍历当前桶（链表）中的每一个节点
+            const Node& current_bucket_data = it.getNode()->data;
+            const K& key = current_bucket_data.key;
+
+            // 4. 用 *新的* 桶数量，重新计算哈希索引
+            std::hash<K> hasher;
+            size_t new_index = hasher(key) % new_bucket_count;
+
+            // 5. 将当前节点的数据添加到新的桶中
+            new_buckets[new_index].push_back(current_bucket_data);
+        }
+    }
+
+    _buckets = new_buckets;
 }
 
 #endif
