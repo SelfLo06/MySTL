@@ -145,16 +145,29 @@ namespace TestMyLinkedList {
     }
 
 
+    // 创建测试用例注册表
+    static const std::vector<TestCase> mylinkedlist_test_cases = {
+        {"Constructor and Empty Test", test_constructor_and_empty},
+        {"Push Back Test", test_push_back},
+        {"Push Front Test", test_push_front},
+        {"Access and Pop Test", test_access_and_pop},
+        {"Iterator Test", test_iterator},
+        {"Reverse Iterator Test", test_reverse_iterator},
+        {"Copy Semantics Test", test_copy_semantics}
+    };
+
+    // 获取测试用例列表
+    const std::vector<TestCase>& get_test_cases() {
+        return mylinkedlist_test_cases;
+    }
+
     void run_all_tests() {
-        TestRunner::reset();
         TestRunner::print_separator("MyLinkedList Tests");
-        TestRunner::run_test("Constructor and Empty Test", test_constructor_and_empty);
-        TestRunner::run_test("Push Back Test", test_push_back);
-        TestRunner::run_test("Push Front Test", test_push_front);
-        TestRunner::run_test("Access and Pop Test", test_access_and_pop);
-        TestRunner::run_test("Iterator Test", test_iterator);
-        TestRunner::run_test("Reverse Iterator Test", test_reverse_iterator);
-        TestRunner::run_test("Copy Semantics Test", test_copy_semantics);
+
+        for (const auto& test_case : mylinkedlist_test_cases) {
+            TestRunner::run_test(test_case.name, test_case.function);
+        }
+
         TestRunner::print_summary();
         TestRunner::print_separator("MyLinkedList Tests Complete");
     }

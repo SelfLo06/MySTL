@@ -62,12 +62,25 @@ namespace TestMyQueueNew {
         assert(q.size() == 0);
     }
 
+    // 创建测试用例注册表
+    static const std::vector<TestCase> myqueue_new_test_cases = {
+        {"Basic Operations Test", test_basic_operations},
+        {"Pop from Empty Test", test_pop_from_empty},
+        {"Mixed Operations Test", test_mixed_operations}
+    };
+
+    // 获取测试用例列表
+    const std::vector<TestCase>& get_test_cases() {
+        return myqueue_new_test_cases;
+    }
+
     void run_all_tests() {
-        TestRunner::reset();
         TestRunner::print_separator("MyQueue-new (Two Stacks) Tests");
-        TestRunner::run_test("Basic Operations Test", test_basic_operations);
-        TestRunner::run_test("Pop from Empty Test", test_pop_from_empty);
-        TestRunner::run_test("Mixed Operations Test", test_mixed_operations);
+
+        for (const auto& test_case : myqueue_new_test_cases) {
+            TestRunner::run_test(test_case.name, test_case.function);
+        }
+
         TestRunner::print_summary();
         TestRunner::print_separator("MyQueue-new Tests Complete");
     }

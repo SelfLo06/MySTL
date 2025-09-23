@@ -7,7 +7,6 @@
 #include <stdexcept>
 
 namespace TestMyVector {
-
     void test_constructor() {
         MyVector<int> vec;
         if (vec.size() != 0 || vec.capacity() != 0) {
@@ -60,7 +59,12 @@ namespace TestMyVector {
 
         // 1. 测试拷贝构造函数
         MyVector<int> vec2 = vec1;
-        assert(vec2.size() == 2);
+        //assert(vec2.size() == 2);
+        if (vec2.size() != 1) {
+            // 确保 throw 的内容不包含 "耗时"
+            throw std::runtime_error(
+                "Assertion failed: Expected vec2.size() to be 1, but it was " + std::to_string(vec2.size()));
+        } // 错误测试
         assert(vec2[0] == 10);
         assert(vec2[1] == 20);
 
@@ -120,14 +124,14 @@ namespace TestMyVector {
         // 1. 测试遍历和读取
         std::cout << "Iterator test: Traversing and reading..." << std::endl;
         int sum = 0;
-        for (int& value : vec) {
+        for (int &value: vec) {
             sum += value;
         }
         assert(sum == 60);
 
         // 2. 测试通过迭代器修改
         std::cout << "Iterator test: Modifying through iterator..." << std::endl;
-        for (int& value : vec) {
+        for (int &value: vec) {
             value += 1;
         }
         assert(vec[0] == 11 && vec[1] == 21 && vec[2] == 31);
@@ -149,19 +153,35 @@ namespace TestMyVector {
         assert(empty_vec.begin() == empty_vec.end());
     }
 
-    void run_all_tests() {
-        TestRunner::reset();
-        TestRunner::print_separator("MyVector Tests");
-        TestRunner::run_test("Constructor Test", test_constructor);
-        TestRunner::run_test("Push Back Test", test_push_back);
-        TestRunner::run_test("Access Test", test_access);
-        TestRunner::run_test("Capacity Test", test_capacity);
-        TestRunner::run_test("Copy and Assignment Test", test_copy_and_assignment);
-        TestRunner::run_test("Modifiers and Capacity Test", test_modifiers_and_capacity);
-        TestRunner::run_test("Iterator Test", test_iterator);
-        TestRunner::print_summary();
-        TestRunner::print_separator("MyVector Tests Complete");
+    // --- 核心改动：创建一个该模块的“测试用例注册表” ---
+    static const std::vector<TestCase> myvector_test_cases = {
+        {"Constructor Test", test_constructor},
+        {"Push Back Test", test_push_back},
+        {"Access Test", test_access},
+        {"Capacity Test", test_capacity},
+        {"Copy and Assignment Test", test_copy_and_assignment},
+        {"Modifiers and Capacity Test", test_modifiers_and_capacity},
+        {"Iterator Test", test_iterator}
+    };
+
+    // --- 实现管理函数 ---
+    const std::vector<TestCase>& get_test_cases() {
+        return myvector_test_cases;
     }
 
 
+
+    // 升级 run_all_tests，让它从注册表中读取并运行
+    void run_all_tests() {
+        TestRunner::print_separator("MyVector Tests");
+        // 直接遍历我们静态的测试用例列表
+        for (const auto& test_case : myvector_test_cases) {
+            // 直接调用 TestRunner::run_test，
+            // test_case.function 本身就是 void(*)() 类型的函数指针，
+            // 正好符合 run_test 函数的第二个参数类型。
+            TestRunner::run_test(test_case.name, test_case.function);
+        }
+        TestRunner::print_summary();
+        TestRunner::print_separator("MyVector Tests Complete");
+    }
 }

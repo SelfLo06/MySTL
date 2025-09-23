@@ -132,12 +132,28 @@ namespace TestMyHashMap {
         assert(map[4] == "four");
     }
 
+
+    // --- 创建测试用例注册表 ---
+    static const std::vector<TestCase> myhashmap_test_cases = {
+        {"Insert and Access Test", test_insert_and_access},
+        {"Find and Erase Test", test_find_and_erase},
+        {"Rehash Test", test_rehash}
+    };
+
+    // --- 实现管理函数 ---
+    const std::vector<TestCase>& get_test_cases() {
+        return myhashmap_test_cases;
+    }
+
     void run_all_tests() {
         TestRunner::reset();
         TestRunner::print_separator("MyHashMap Tests");
-        TestRunner::run_test("Insert and Access Test", test_insert_and_access);
-        TestRunner::run_test("Find and Erase Test", test_find_and_erase);
-        TestRunner::run_test("Rehash Test", test_rehash); // <-- 新增
+
+        // 从注册表中读取并运行所有测试
+        for (const auto& test_case : myhashmap_test_cases) {
+            TestRunner::run_test(test_case.name, test_case.function);
+        }
+
         TestRunner::print_summary();
         TestRunner::print_separator("MyHashMap Tests Complete");
     }

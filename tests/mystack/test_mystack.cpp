@@ -37,10 +37,22 @@ namespace TestMyStack {
         assert(s.empty());
     }
 
+    // --- 创建测试用例注册表 ---
+    static const std::vector<TestCase> mystack_test_cases = {
+        {"Stack Operations Test", test_stack_operations}
+    };
+
+    // --- 实现 get_test_cases 函数 ---
+    const std::vector<TestCase>& get_test_cases() {
+        return mystack_test_cases;
+    }
+
     void run_all_tests() {
-        TestRunner::reset();
         TestRunner::print_separator("MyStack Tests");
-        TestRunner::run_test("Stack Operations Test", test_stack_operations);
+        // 从注册表中读取并运行测试
+        for (const auto& test_case : mystack_test_cases) {
+            TestRunner::run_test(test_case.name, test_case.function);
+        }
         TestRunner::print_summary();
         TestRunner::print_separator("MyStack Tests Complete");
     }

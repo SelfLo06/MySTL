@@ -5,7 +5,7 @@ int TestRunner::passed_count = 0;
 int TestRunner::total_count = 0;
 double TestRunner::total_time_ms = 0.0;
 
-void TestRunner::run_test(const std::string& test_name, void (*test_func)()) {
+void TestRunner::run_test(const std::string& test_name, const std::function<void()>& test_func) {
     std::cout << "\n========== " << test_name << " ==========" << std::endl;
     total_count++;
     auto start = std::chrono::high_resolution_clock::now();
@@ -40,7 +40,7 @@ void TestRunner::print_result(const std::string& test_name, bool passed, const s
     if (passed) {
         std::cout << "✓ " << test_name << " 通过. " << message << std::endl;
     } else {
-        std::cout << "✗ " << test_name << " 未通过: " << message << std::endl;
+        std::cout << "✗ " << test_name << " 失败. 原因: " << message << std::endl;
     }
 }
 

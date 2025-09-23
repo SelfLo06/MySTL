@@ -36,10 +36,22 @@ namespace TestMyQueue {
         assert(q.empty());
     }
 
+    // --- 测试用例注册表 ---
+    static const std::vector<TestCase> queue_test_cases = {
+        {"Queue Operations Test", test_queue_operations}
+    };
+
+    // --- get_test_cases ---
+    const std::vector<TestCase>& get_test_cases() {
+        return queue_test_cases;
+    }
+
+    // --- run_all_tests ---
     void run_all_tests() {
-        TestRunner::reset();
         TestRunner::print_separator("MyQueue Tests");
-        TestRunner::run_test("Queue Operations Test", test_queue_operations);
+        for (const auto& test_case : queue_test_cases) {
+            TestRunner::run_test(test_case.name, test_case.function);
+        }
         TestRunner::print_summary();
         TestRunner::print_separator("MyQueue Tests Complete");
     }

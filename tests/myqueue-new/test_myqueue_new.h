@@ -1,6 +1,9 @@
 #ifndef TEST_MYQUEUE_NEW_H
 #define TEST_MYQUEUE_NEW_H
 
+#include <vector>
+#include "common/test_common.h"
+
 namespace TestMyQueueNew {
     // 测试基本的入队、出队和大小功能
     void test_basic_operations();
@@ -10,6 +13,9 @@ namespace TestMyQueueNew {
 
     // 测试混合的 push 和 pop 操作，以验证两个栈之间的元素转移逻辑
     void test_mixed_operations();
+
+    // 获取测试用例列表
+    const std::vector<TestCase>& get_test_cases();
 
     // 运行所有 MyQueue-new 的测试
     void run_all_tests();

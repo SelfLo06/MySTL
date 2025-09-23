@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(MySTL)
 
+
 set(CMAKE_CXX_STANDARD 17)
 
 # 设置包含目录
@@ -31,5 +32,8 @@ add_executable(MySTL
         include/MyHashMap.h
         tests/myhashmap/test_myhashmap.h
         tests/myhashmap/test_myhashmap.cpp
+        include/MyDeque.h
+        tests/mydeque/test_mydeque.cpp
+        tests/mydeque/test_mydeque.h
         # 未来可以添加：tests/mylist/test_mylist.cpp
 )
