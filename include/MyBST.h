@@ -11,6 +11,7 @@ private:
         T data;
         Node* left;
         Node* right;
+        size_t size;
 
         Node(const T& value)
             : data(value), left(nullptr), right(nullptr) {}
@@ -43,6 +44,20 @@ private:
     Node* _remove(Node* node, const T& value);
     Node* _find_min(Node* node) const;
 
+    // 递归查找size，虽然复杂度为O(n)，但容易维护，
+    /* 这是单纯二叉搜索树的缺陷，即删除和更新size的操作没办法同步，只有下一个函数才知道有没有成功删除
+     * STL中使用的是红黑树
+     * 在 STL 的实现中，节点的内存分配 (new Node) 和释放 (delete Node) 通常由一个叫做分配器 (Allocator) 的模板参数来管理。
+     * insert 和 erase 等操作被设计得非常精细。它们的核心逻辑（查找、链接指针、旋转等）与节点的物理删除是分开的。
+     * erase 函数在找到要删除的节点后，会执行一系列指针操作（可能包括树旋转）来“解除”这个节点的链接，然后才会调用分配器去释放该节点的内存
+    * 正因为“解除链接”和“释放内存”是分开的，计数逻辑就变得非常简单。
+    * insert 操作: 当且仅当分配器真的创建了一个新节点时，_size 才会 ++。
+    * erase 操作: 当且仅当一个节点真的被解除链接并准备释放时，_size 才会 --。
+    * 在双子节点的情况下，红黑树的 erase 逻辑会找到中序后继，用后继节点的数据覆盖要删除的节点（或者直接交换节点），
+    * 然后真正被解除链接并删除的是那个后继节点。由于每个节点只会被删除一次，所以 _size-- 也只会被执行一次
+    */
+    size_t _size(Node* node) const;
+
 public:
     MyBST() : _root(nullptr) {}
     MyBST(const MyBST& other); // 拷贝函数
@@ -61,6 +76,12 @@ public:
     Node* upper_bound(const T& value) const;
 
     void remove(const T& value);
+    void clear();
+
+    size_t size() const;
+    bool empty() const;
+
+    T* find_value(const T& value_to_find) const;
 };
 
 template <typename T>
@@ -73,7 +94,7 @@ void MyBST<T>::_destroy_tree(Node* node) {
     _destroy_tree(node->left);
     _destroy_tree(node->right);
 
-    std::cout << "Deleting node: " << node->data << std::endl; // 方便调试
+    //std::cout << "Deleting node: " << node->data << std::endl; // 方便调试
     delete node;
 }
 
@@ -122,6 +143,9 @@ typename MyBST<T>::Node* MyBST<T>::_insert(Node* node, const T& value) {
         node->right = _insert(node->right,value);
     }
     // 如果 value == node->data，我们什么都不做，直接返回原节点
+
+    // 更新 size
+    node->size = 1 + (node->left ? node->left->size : 0) + (node->right ? node->right->size : 0);
 
     // 3. 返回当前节点（可能它的 left 或 right 已经被更新）
     // 实际是树的更新
@@ -234,7 +258,9 @@ typename MyBST<T>::Node *MyBST<T>::_lower_bound(Node *node, const T &value) cons
         }
         else return node;
     }
-    else return _lower_bound(node->right, value);
+    else {
+        return _lower_bound(node->right, value);
+    }
 }
 
 template<typename T>
@@ -342,6 +368,8 @@ typename MyBST<T>::Node *MyBST<T>::_remove(Node *node, const T &value) {
             node->right = _remove(node->right, successor->data);
         }
     }
+    // 更新 size
+    node->size = 1 + (node->left ? node->left->size : 0) + (node->right ? node->right->size : 0);
 
     return node;
 }
@@ -349,6 +377,39 @@ typename MyBST<T>::Node *MyBST<T>::_remove(Node *node, const T &value) {
 template<typename T>
 void MyBST<T>::remove(const T &value) {
     _root = _remove(_root, value);
+}
+
+template<typename T>
+void MyBST<T>::clear() {
+    _destroy_tree(_root);
+    _root = nullptr;
+}
+
+template<typename T>
+size_t MyBST<T>::_size(Node* node) const {
+    if (!node) return 0;
+    return 1 + _size(node->left) + _size(node->right);
+}
+
+template<typename T>
+size_t MyBST<T>::size() const {
+    return _size(_root);
+}
+
+template<typename T>
+bool MyBST<T>::empty() const {
+    return _root == nullptr;
+}
+
+template<typename T>
+T *MyBST<T>::find_value(const T &value_to_find) const {
+    Node* node = lower_bound(value_to_find);
+    // 如果找到了节点，并且节点的数据确实等于我们要找的
+    // (因为 lower_bound 可能返回的是下一个更大的元素)
+    if (node != nullptr && !(value_to_find < node->data)) { // 等价于 value_to_find == node->data
+        return &(node->data);
+    }
+    return nullptr;
 }
 
 #endif

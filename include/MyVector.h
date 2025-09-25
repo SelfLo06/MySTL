@@ -107,7 +107,7 @@ private:
 
 template <typename T>
 MyVector<T>::MyVector() : _data(nullptr), _size(0), _capacity(0) {
-    std::cout << "Default constructor called!" << std::endl;
+    //std::cout << "Default constructor called!" << std::endl;
 }
 
 template<typename T>
@@ -115,7 +115,7 @@ MyVector<T>::MyVector(size_t count) : _data(nullptr),_size(count),_capacity(coun
 
     if (count > 0) _data = new T[count];
 
-    std::cout << "Default constructor with size_t called!" << std::endl;
+    //std::cout << "Default constructor with size_t called!" << std::endl;
 }
 
 template <typename T>
@@ -123,7 +123,7 @@ MyVector<T>::MyVector(const MyVector& other)
     // C++ 推荐使用成员初始化列表来初始化成员变量
     : _size(other._size), _capacity(other._capacity), _data(nullptr)
 {
-    std::cout << "Copy constructor called!" << std::endl;
+    //std::cout << "Copy constructor called!" << std::endl;
 
     // 思考：如果 other 是一个空的 vector (capacity 为 0)，我们还需要 new 内存吗？
     if (other._capacity > 0) {
@@ -141,7 +141,7 @@ MyVector<T>::MyVector(const MyVector& other)
 
 template <typename T>
 MyVector<T>& MyVector<T>::operator=(const MyVector& other) {
-    std::cout << "Copy assignment operator called!" << std::endl;
+    //std::cout << "Copy assignment operator called!" << std::endl;
 
     // 步骤 1: 检查自我赋值
     // 思考：如果有人写了 vec1 = vec1; 会发生什么？
@@ -178,7 +178,7 @@ MyVector<T>& MyVector<T>::operator=(const MyVector& other) {
 
 template <typename T>
 MyVector<T>::~MyVector() {
-    std::cout << "Destructor called!" << std::endl;
+    //std::cout << "Destructor called!" << std::endl;
     delete[] _data;
 }
 
@@ -192,7 +192,7 @@ void MyVector<T>::push_back(const T& value) {
 
 template <typename T>
 void MyVector<T>::_resize(size_t new_capacity) {
-    std::cout << "Resizing from " << _capacity << " to " << new_capacity << std::endl;
+    //std::cout << "Resizing from " << _capacity << " to " << new_capacity << std::endl;
     T* new_data = new T[new_capacity];
     for (size_t i = 0; i < _size; i++) {
         new_data[i] = _data[i];

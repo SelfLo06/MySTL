@@ -14,6 +14,10 @@
 #include "myqueue-new/test_myqueue_new.h"
 #include "myhashmap/test_myhashmap.h"
 #include "mydeque/test_mydeque.h"
+#include "mybinaryheap/test_mybinaryheap.h"
+#include "mypriorityqueue/test_mypriorityqueue.h"
+#include "myset/test_myset.h"
+#include "mymap/test_mymap.h"
 
 
 // 帮助函数: 将所有测试按顺序执行。
@@ -30,6 +34,10 @@ void run_all_tests_sequentially() {
     TestMyQueueNew::run_all_tests();
     TestMyHashMap::run_all_tests();
     TestMyDeque::run_all_tests();
+    TestMyBinaryHeap::run_all_tests();
+    TestMyPriorityQueue::run_all_tests();
+    TestMyMap::run_all_tests();
+    TestMySet::run_all_tests();
 
     cout << "\n--- All tests completed ---" << endl;
 }
@@ -54,6 +62,10 @@ void runInteractiveMode() {
         cout << "  6. MyQueue (from Stacks) Tests\n";
         cout << "  7. MyHashMap Tests\n";
         cout << "  8. MyDeque Tests\n";
+        cout << "  9. MyBinaryHeap Tests\n";
+        cout << " 10. MyPriorityQueue Tests\n";
+        cout << " 11. MySet Tests\n";
+        cout << " 12. MyMap Tests\n";
         cout << "------------------------------------------\n";
         cout << "  0. Run ALL tests\n";
         cout << " -1. Exit\n";
@@ -78,7 +90,11 @@ void runInteractiveMode() {
             case 5: TestMyBST::run_all_tests(); TestRunner::print_summary(); break;
             case 6: TestMyQueueNew::run_all_tests(); TestRunner::print_summary(); break;
             case 7: TestMyHashMap::run_all_tests(); TestRunner::print_summary(); break;
-            case 8: TestMyDeque::run_all_tests(); break;
+            case 8: TestMyDeque::run_all_tests(); TestRunner::print_summary();break;
+            case 9: TestMyBinaryHeap::run_all_tests(); TestRunner::print_summary();break;
+            case 10: TestMyPriorityQueue::run_all_tests(); TestRunner::print_summary(); break;
+            case 11: TestMySet::run_all_tests(); TestRunner::print_summary(); break;
+            case 12: TestMyMap::run_all_tests(); TestRunner::print_summary(); break;
             case 0: run_all_tests_sequentially(); break; // 这个函数自己会处理摘要
             case -1: cout << "Exiting program.\n"; return;
             default: cout << "\n[Error] Invalid choice. Please try again.\n"; break;
@@ -102,6 +118,10 @@ void runCommandMode(int argc, char* argv[]) {
         cout << "test_queue_new;MyQueue (from Stacks) Tests" << endl;
         cout << "test_hashmap;MyHashMap Tests" << endl;
         cout << "test_deque;MyDeque Tests" << endl;
+        cout << "test_heap;MyBinaryHeap Tests" << endl;
+        cout << "test_pq;MyPriorityQueue Tests" << endl;
+        cout << "test_set;MySet Tests" << endl;
+        cout << "test_map;MyMap Tests" << endl;
         cout << "test_all;Run ALL Tests" << endl;
         return;
     }
@@ -119,6 +139,10 @@ void runCommandMode(int argc, char* argv[]) {
         else if (group_name == "test_queue_new") test_cases = &TestMyQueueNew::get_test_cases();
         else if (group_name == "test_hashmap") test_cases = &TestMyHashMap::get_test_cases();
         else if (group_name == "test_deque") test_cases = &TestMyDeque::get_test_cases();
+        else if (group_name == "test_heap") test_cases = &TestMyBinaryHeap::get_test_cases();
+        else if (group_name == "test_pq") test_cases = &TestMyPriorityQueue::get_test_cases();
+        else if (group_name == "test_set") test_cases = &TestMySet::get_test_cases();
+        else if (group_name == "test_map") test_cases = &TestMyMap::get_test_cases();
 
         if (test_cases) {
             for (const auto& test_case : *test_cases) {
@@ -144,6 +168,10 @@ void runCommandMode(int argc, char* argv[]) {
         else if (group_name == "test_queue_new") test_cases = &TestMyQueueNew::get_test_cases();
         else if (group_name == "test_hashmap") test_cases = &TestMyHashMap::get_test_cases();
         else if (group_name == "test_deque") test_cases = &TestMyDeque::get_test_cases();
+        else if (group_name == "test_heap") test_cases = &TestMyBinaryHeap::get_test_cases();
+        else if (group_name == "test_pq") test_cases = &TestMyPriorityQueue::get_test_cases();
+        else if (group_name == "test_set") test_cases = &TestMySet::get_test_cases();
+        else if (group_name == "test_map") test_cases = &TestMyMap::get_test_cases();
 
         if (test_cases) {
             bool found = false;
@@ -175,6 +203,10 @@ void runCommandMode(int argc, char* argv[]) {
     else if (command == "test_queue_new") TestMyQueueNew::run_all_tests();
     else if (command == "test_hashmap") TestMyHashMap::run_all_tests();
     else if (command == "test_deque") TestMyDeque::run_all_tests();
+    else if (command == "test_heap") TestMyBinaryHeap::run_all_tests();
+    else if (command == "test_pq") TestMyPriorityQueue::run_all_tests();
+    else if (command == "test_set") TestMySet::run_all_tests();
+    else if (command == "test_map") TestMyMap::run_all_tests();
     else if (command == "test_all") {
         run_all_tests_sequentially();
         return; // all tests 模式自己管理摘要，所以提前退出

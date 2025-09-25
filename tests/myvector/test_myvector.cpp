@@ -59,12 +59,12 @@ namespace TestMyVector {
 
         // 1. 测试拷贝构造函数
         MyVector<int> vec2 = vec1;
-        //assert(vec2.size() == 2);
-        if (vec2.size() != 1) {
-            // 确保 throw 的内容不包含 "耗时"
-            throw std::runtime_error(
-                "Assertion failed: Expected vec2.size() to be 1, but it was " + std::to_string(vec2.size()));
-        } // 错误测试
+        assert(vec2.size() == 2);
+        // if (vec2.size() != 1) {
+        //     // 确保 throw 的内容不包含 "耗时"
+        //     throw std::runtime_error(
+        //         "Assertion failed: Expected vec2.size() to be 1, but it was " + std::to_string(vec2.size()));
+        // } // 错误测试
         assert(vec2[0] == 10);
         assert(vec2[1] == 20);
 

@@ -35,5 +35,17 @@ add_executable(MySTL
         include/MyDeque.h
         tests/mydeque/test_mydeque.cpp
         tests/mydeque/test_mydeque.h
+        include/MyBinaryHeap.h
+        tests/mybinaryheap/test_mybinaryheap.h
+        tests/mybinaryheap/test_mybinaryheap.cpp
+        include/MyPriorityQueue.h
+        tests/mypriorityqueue/test_mypriorityqueue.h
+        tests/mypriorityqueue/test_mypriorityqueue.cpp
+        include/MySet.h
+        tests/myset/test_myset.h
+        tests/myset/test_myset.cpp
+        include/MyMap.h
+        tests/mymap/test_mymap.h
+        tests/mymap/test_mymap.cpp
         # 未来可以添加：tests/mylist/test_mylist.cpp
 )
