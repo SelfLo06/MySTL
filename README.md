@@ -365,5 +365,70 @@ Value& MyMap<Key, Value>::operator[](const Key& key) {
     }
 }
 ```
+
+##### **12. `MyTreap` (随机化平衡二叉搜索树)**
+*   **定位:** `MyBST` 的高性能、自平衡替代品。通过引入随机化，以极高的概率保证了树的平衡，使得所有核心操作的期望时间复杂度都稳定在 **O(log N)**，从根本上解决了 `MyBST` 在有序数据下退化为链表 O(N) 的性能问题。
+*   **核心思想:** **“二叉搜索树”与“堆”的完美结合 (Tree + Heap = Treap)**。每个节点不仅有一个 `key` 用于满足二叉搜索树的排序规则，还有一个随机生成的 `priority` 用于满足（最小）堆的规则。正是**优先级的随机性**，保证了树结构的随机性和期望平衡。
+*   **关键技术点:**
+    1.  **双重不变性 (Dual Invariants):** `MyTreap` 的所有操作都必须同时维护两种数据结构的不变性：**BST有序性** 和 **Heap优先级**。这是其所有复杂性的根源。
+    2.  **原子操作 - 旋转 (Rotation):** `_leftRotate` 和 `_rightRotate` 是实现平衡的核心。它们能够在**不破坏BST有序性**的前提下，改变树的局部结构，从而修复被 `insert` 或 `remove` 操作暂时破坏的堆属性。
+    3.  **`insert` 逻辑 - 上浮 (Bubble Up):** 节点首先按BST规则插入为叶子，然后通过一系列旋转操作，根据其优先级一路“上浮”到正确的位置。
+    4.  **`remove` 逻辑 - 下沉 (Sink Down):** 为了优雅地删除一个节点，通过旋转操作，先将其与优先级更高（值更小）的子节点交换位置，逐步“下沉”直至其成为叶子节点，然后安全删除。
+    5.  **资源安全 (Resource Safety):** 完整实现了**“拷贝三/五法则”**（析构函数、拷贝构造、拷贝赋值），通过 `_destroy_tree` 和 `_copy_tree` 辅助函数确保了深拷贝和无内存泄漏，使 `MyTreap` 成为一个行为正确的、工业级的 C++ 组件。
+*   **核心洞察:** `MyTreap` 的实现是一次从理论到工程的综合性挑战。它雄辩地证明了**随机化算法**在解决复杂问题上的优雅与高效。调试过程中遇到的无限循环和内存访问冲突，也让人深刻领悟到**“数据结构不变性神圣不可侵犯”**这一血泪教训。
+
+```cpp
+// 关键代码: remove "纯粹旋转" 的核心逻辑，体现了“下沉”思想的统一性
+// ... in _remove(node, key) after finding the node ...
+else { // 找到了要删除的节点
+    if (node->left == nullptr && node->right == nullptr) { // Base Case
+        delete node;
+        return nullptr;
+    }
+    // Recursive Step: 如果不是叶子，必须旋转下沉
+    if (node->left == nullptr || (node->right != nullptr && node->right->priority < node->left->priority)) {
+        node = _leftRotate(node);
+        node->left = _remove(node->left, key); // 在旋转后的新位置继续删除
+    } else {
+        node = _rightRotate(node);
+        node->right = _remove(node->right, key); // 在旋转后的新位置继续删除
+    }
+}
+```
+
+##### **13. `MySetPro` (高性能有序集合)**
+*   **定位:** `MySet` 的直接升级版，对标 `std::set`，提供 **O(log N)** 的稳定性能保证。
+*   **核心思想:** **策略模式 (Strategy Pattern) 与接口兼容性的极致体现**。
+*   **关键技术点:**
+    1.  **无痛引擎替换 (Painless Engine Swap):** `MySetPro` 的实现**未修改任何一行核心逻辑代码**。仅仅是将底层的 `MyBST<T>` 实例，替换为了 `MyTreap<T>`。
+    2.  **接口兼容性:** 这次无缝升级之所以成为可能，是因为在设计 `MyTreap` 时，刻意使其**完全遵循了 `MyBST` 的公共接口** (`insert`, `find`, `remove`, `size` 等)。这是面向接口编程思想的巨大成功。
+*   **核心洞察:** `MySetPro` 的诞生，是前期良好设计带来的最大红利。它雄辩地证明了**“接口与实现分离”**的威力：当上层应用（`MySet`）依赖于一个稳定的接口而非具体的实现时，更换底层实现（“策略”）的成本可以降至几乎为零。
+
+```cpp
+// 关键代码: MySetPro 的实现，完美体现了引擎替换的简洁性
+#include "MyTreap.h" // <-- 包含了新引擎
+
+template <typename T>
+class MySetPro {
+private:
+    MyTreap<T> _tree; // <-- 更换了底层引擎实例
+
+public:
+    // 所有接口的实现与 MySet 完全相同，只是将调用委托给 MyTreap
+    void insert(const T& value) { _tree.insert(value); }
+    bool contains(const T& value) const { return _tree.find(value); }
+    // ...
+};
+```
+
+##### **14. `MyMapPro` (高性能有序映射)**
+*   **定位:** `MyMap` 的直接升级版，对标 `std::map`，提供键值对的 **O(log N)** 稳定存取性能。
+*   **核心思想:** **复用与适配的胜利**。
+*   **关键技术点:**
+    1.  **适配器复用:** 完全复用了 `MyMap` 中为 `Pair<Key, Value>` 结构体设计的**所有比较运算符重载**，使得 `MyTreap` 引擎能够像 `MyBST` 一样，无需任何修改就能理解如何根据 `key` 来组织 `Pair` 对象。
+    2.  **关键桥梁 (`find_value`):** 为 `MyTreap` 添加了与 `MyBST` 中功能完全相同的 `find_value` 接口，该接口返回指向节点内部数据的指针，从而让 `MyMapPro` 的 `find` 和 `operator[]` 核心逻辑可以**一字不改地迁移**过来。
+    3.  **性能的保证:** 底层 `MyTreap` 的自平衡特性，确保了即使用户插入完全有序的键值对，`MyMapPro` 的性能也不会退化。
+*   **核心洞察:** 如果说 `MyTreap` 的实现是一场艰苦的攻坚战，那么 `MyMapPro` 的实现就是一场轻松愉快的闪电战。整个过程再次强化了**“自底向上”**构建大型软件的哲学：只要基础组件被打磨得功能完备、接口统一且经过充分测试，构建上层复杂应用就会变得高效、可靠且充满乐趣。为 `MySetMax` 和 `MyMapMax` 的 `AVL` 树引擎实现，也奠定了清晰的设计蓝图。
+
 ---
-**[最后更新日期]**: 2025年9月25日
+**[最后更新日期]**: 2025年10月18日

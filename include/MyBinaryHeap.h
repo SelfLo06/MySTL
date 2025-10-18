@@ -140,6 +140,4 @@ T MyBinaryHeap<T>::extract() {
 }
 
 
-
-
 #endif //MYSTL_MYBINARYHEAP_H

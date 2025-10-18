@@ -320,6 +320,58 @@ void test_remove() {
         }
     }
 
+    void test_size_basic() {
+        MyBST<int> bst;
+        assert(bst.size() == 0);
+
+        // 插入 7 个确定元素
+        bst.insert(50);
+        bst.insert(30);
+        bst.insert(70);
+        bst.insert(20);
+        bst.insert(40);
+        bst.insert(60);
+        bst.insert(80);
+        assert(bst.size() == 7);
+
+        // 删除一个元素后 size 减 1
+        bst.remove(20);
+        assert(bst.size() == 6);
+
+        // 重复插入已存在元素不应改变 size（前面的测试也假定此行为）
+        bst.insert(30);
+        assert(bst.size() == 6);
+    }
+
+    void test_size_copy_and_assign() {
+        auto create_small = []() {
+            MyBST<int> b;
+            b.insert(50);
+            b.insert(30);
+            b.insert(70);
+            return b;
+        };
+
+        // 拷贝构造保持 size
+        MyBST<int> a = create_small();
+        assert(a.size() == 3);
+        MyBST<int> b = a;
+        assert(b.size() == 3);
+
+        // 修改原对象不应影响拷贝的 size
+        a.remove(30);
+        assert(a.size() == 2);
+        assert(b.size() == 3);
+
+        // 拷贝赋值保持 size，且自我赋值安全
+        MyBST<int> c;
+        c.insert(1);
+        c = b;
+        assert(c.size() == b.size());
+        c = c; // 自我赋值
+        assert(c.size() == b.size());
+    }
+
     // --- 创建测试用例注册表 ---
     static const std::vector<TestCase> mybst_test_cases = {
         {"Insert and Find Test", test_insert_and_find},
@@ -327,7 +379,9 @@ void test_remove() {
         {"Lower Bound Test", test_lower_bound},
         {"Upper Bound Test", test_upper_bound},
         {"Remove Test", test_remove},
-        {"Resource Management (Copy/Assign)", test_resource_management}
+        {"Resource Management (Copy/Assign)", test_resource_management},
+        {"Size Basic Test", test_size_basic},
+        {"Size Copy/Assign Test", test_size_copy_and_assign}
     };
 
     // --- 实现管理函数 ---

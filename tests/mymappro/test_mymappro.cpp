@@ -1,11 +1,11 @@
-#include "test_mymap.h"
+#include "test_mymappro.h"
 
 #include <stdexcept>
 #include <string>
 #include "common/test_common.h"
-#include "MyMap.h"
+#include "MyMapPro.h"
 
-namespace TestMyMap {
+namespace TestMyMapPro {
 
     void test_insert_and_find() {
         MyMapPro<std::string, int> ages;
@@ -136,8 +136,8 @@ namespace TestMyMap {
         std::cout << "Erase and Remove Test Passed." << std::endl;
     }
 
-    // 在 mymap_test_cases 中注册
-    static const std::vector<TestCase> mymap_test_cases = {
+    // 在 mymappro_test_cases 中注册
+    static const std::vector<TestCase> mymappro_test_cases = {
         {"Insert and Find", test_insert_and_find},
         {"Operator Square Brackets", test_operator_square_brackets},
         {"Overwrite and Duplicates", test_overwrite_and_duplicates},
@@ -148,16 +148,16 @@ namespace TestMyMap {
 
     // --- 实现管理函数 ---
     const std::vector<TestCase>& get_test_cases() {
-        return mymap_test_cases;
+        return mymappro_test_cases;
     }
 
     void run_all_tests() {
-        TestRunner::print_separator("MyMap Tests");
-        for (const auto& test_case : mymap_test_cases) {
+        TestRunner::print_separator("MyMapPro Tests");
+        for (const auto& test_case : mymappro_test_cases) {
             TestRunner::run_test(test_case.name, test_case.function);
         }
         TestRunner::print_summary();
-        TestRunner::print_separator("MyMap Tests Complete");
+        TestRunner::print_separator("MyMapPro Tests Complete");
     }
 
-} // namespace TestMyMap
+} // namespace TestMyMapPro

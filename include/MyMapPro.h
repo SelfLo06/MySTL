@@ -1,9 +1,11 @@
-// MyMap.h
-// 也可以叫 dictionary
-#ifndef MYSTL_MYMAP_H
-#define MYSTL_MYMAP_H
+//
+// Created by L3505 on 2025/10/19.
+//
 
-#include "MyBST.h"
+#ifndef MYSTL_MYMAPPRO_H
+#define MYSTL_MYMAPPRO_H
+
+#include "MyTreap.h"
 
 // 1. 定义 Pair 结构体
 template <typename Key, typename Value>
@@ -40,7 +42,7 @@ template <typename Key, typename Value>
 class MyMapPro {
 private:
     // 使用 MyBST 存储 Pair 对象
-    MyBST<Pair<Key, Value>> _tree;
+    MyTreap<Pair<Key, Value>> _tree;
 
 public:
     void insert(const Key& key, const Value& value);
@@ -99,4 +101,4 @@ void MyMapPro<Key, Value>::erase(const Key &key) {
     _tree.remove(key);
 }
 
-#endif //MYSTL_MYMAP_H
+#endif //MYSTL_MYMAPPRO_H

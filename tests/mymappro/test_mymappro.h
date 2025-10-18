@@ -1,10 +1,10 @@
-#ifndef TEST_MYMAP_H
-#define TEST_MYMAP_H
+#ifndef TEST_MYMAPPRO_H
+#define TEST_MYMAPPRO_H
 
 #include "common/test_common.h"
 #include <vector>
 
-namespace TestMyMap {
+namespace TestMyMapPro {
     // --- 声明测试函数 ---
     void test_insert_and_find();
     void test_operator_square_brackets();
@@ -17,4 +17,4 @@ namespace TestMyMap {
     void run_all_tests();
 }
 
-#endif // TEST_MYMAP_H
+#endif // TEST_MYMAPPRO_H

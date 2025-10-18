@@ -14,7 +14,7 @@ private:
         size_t size;
 
         Node(const T& value)
-            : data(value), left(nullptr), right(nullptr) {}
+            : data(value), left(nullptr), right(nullptr), size(1){}
     };
 
 /*
@@ -56,7 +56,7 @@ private:
     * 在双子节点的情况下，红黑树的 erase 逻辑会找到中序后继，用后继节点的数据覆盖要删除的节点（或者直接交换节点），
     * 然后真正被解除链接并删除的是那个后继节点。由于每个节点只会被删除一次，所以 _size-- 也只会被执行一次
     */
-    size_t _size(Node* node) const;
+    // size_t _size(Node* node) const;
 
 public:
     MyBST() : _root(nullptr) {}
@@ -108,6 +108,7 @@ typename MyBST<T>::Node *MyBST<T>::_copy_tree(Node *other_node) const {
     newNode->data = other_node->data;
     newNode->left = _copy_tree(other_node->left);
     newNode->right = _copy_tree(other_node->right);
+    newNode->size = other_node->size;
 
     return newNode;
 }
@@ -251,7 +252,7 @@ typename MyBST<T>::Node *MyBST<T>::_lower_bound(Node *node, const T &value) cons
         return nullptr;
     }
 
-    if (value <= node->data) {
+    if (!(node->data < value)) {
         Node* left_result = _lower_bound(node->left, value);
         if (left_result != nullptr) {
             return left_result;
@@ -385,15 +386,15 @@ void MyBST<T>::clear() {
     _root = nullptr;
 }
 
-template<typename T>
-size_t MyBST<T>::_size(Node* node) const {
-    if (!node) return 0;
-    return 1 + _size(node->left) + _size(node->right);
-}
+// template<typename T>
+// size_t MyBST<T>::_size(Node* node) const {
+//     if (!node) return 0;
+//     return 1 + _size(node->left) + _size(node->right);
+// }
 
 template<typename T>
 size_t MyBST<T>::size() const {
-    return _size(_root);
+    return _root ? _root->size : 0;
 }
 
 template<typename T>
@@ -406,7 +407,7 @@ T *MyBST<T>::find_value(const T &value_to_find) const {
     Node* node = lower_bound(value_to_find);
     // 如果找到了节点，并且节点的数据确实等于我们要找的
     // (因为 lower_bound 可能返回的是下一个更大的元素)
-    if (node != nullptr && !(value_to_find < node->data)) { // 等价于 value_to_find == node->data
+    if (node != nullptr && !(value_to_find < node->data) && !(node->data < value_to_find)) { // 等价于 value_to_find == node->data
         return &(node->data);
     }
     return nullptr;

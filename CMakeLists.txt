@@ -47,5 +47,14 @@ add_executable(MySTL
         include/MyMap.h
         tests/mymap/test_mymap.h
         tests/mymap/test_mymap.cpp
+        include/MyTreap.h
+        tests/mytreap/test_mytreap.h
+        tests/mytreap/test_mytreap.cpp
+        include/MySetPro.h
+        include/MyMapPro.h
+        tests/mysetpro/test_mysetpro.h
+        tests/mysetpro/test_mysetpro.cpp
+        tests/mymappro/test_mymappro.h
+        tests/mymappro/test_mymappro.cpp
         # 未来可以添加：tests/mylist/test_mylist.cpp
 )

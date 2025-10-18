@@ -12,6 +12,8 @@ namespace TestMyBST {
     void test_remove();
     void test_resource_management();
     void run_all_tests();
+    void test_size_basic();
+    void test_size_copy_and_assign();
 
     const std::vector<TestCase>& get_test_cases();
 }
