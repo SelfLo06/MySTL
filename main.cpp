@@ -21,6 +21,7 @@
 #include "mytreap/test_mytreap.h"
 #include "mysetpro/test_mysetpro.h"
 #include "mymappro/test_mymappro.h"
+#include "mydisjointset/test_mydisjointset.h"
 
 
 // 帮助函数: 将所有测试按顺序执行。
@@ -44,6 +45,7 @@ void run_all_tests_sequentially() {
     TestMyTreap::run_all_tests();
     TestMySetPro::run_all_tests();
     TestMyMapPro::run_all_tests();
+    TestMyDisjointSet::run_all_tests();
 
     cout << "\n--- All tests completed ---" << endl;
 }
@@ -75,6 +77,7 @@ void runInteractiveMode() {
         cout << " 13. MyTreap Tests\n";
         cout << " 14. MySetPro Tests\n";
         cout << " 15. MyMapPro Tests\n";
+        cout << " 16. MyDisjointSet Tests\n";
         cout << "------------------------------------------\n";
         cout << "  0. Run ALL tests\n";
         cout << " -1. Exit\n";
@@ -107,6 +110,7 @@ void runInteractiveMode() {
             case 13: TestMyTreap::run_all_tests(); TestRunner::print_summary(); break;
             case 14: TestMySetPro::run_all_tests(); TestRunner::print_summary(); break;
             case 15: TestMyMapPro::run_all_tests(); TestRunner::print_summary(); break;
+            case 16: TestMyDisjointSet::run_all_tests(); TestRunner::print_summary(); break;
             case 0: run_all_tests_sequentially(); break; // 这个函数自己会处理摘要
             case -1: cout << "Exiting program.\n"; return;
             default: cout << "\n[Error] Invalid choice. Please try again.\n"; break;
@@ -137,6 +141,7 @@ void runCommandMode(int argc, char* argv[]) {
         cout << "test_treap;MyTreap Tests" << endl;
         cout << "test_setpro;MySetPro Tests" << endl;
         cout << "test_mappro;MyMapPro Tests" << endl;
+        cout << "test_disjointset;MyDisjointSet Tests" << endl;
         cout << "test_all;Run ALL Tests" << endl;
         return;
     }
@@ -161,6 +166,7 @@ void runCommandMode(int argc, char* argv[]) {
         else if (group_name == "test_treap") test_cases = &TestMyTreap::get_test_cases();
         else if (group_name == "test_setpro") test_cases = &TestMySetPro::get_test_cases();
         else if (group_name == "test_mappro") test_cases = &TestMyMapPro::get_test_cases();
+        else if (group_name == "test_disjointset") test_cases = &TestMyDisjointSet::get_test_cases();
 
         if (test_cases) {
             for (const auto& test_case : *test_cases) {
@@ -193,6 +199,7 @@ void runCommandMode(int argc, char* argv[]) {
         else if (group_name == "test_treap") test_cases = &TestMyTreap::get_test_cases();
         else if (group_name == "test_setpro") test_cases = &TestMySetPro::get_test_cases();
         else if (group_name == "test_mappro") test_cases = &TestMyMapPro::get_test_cases();
+        else if (group_name == "test_disjointset") test_cases = &TestMyDisjointSet::get_test_cases();
 
         if (test_cases) {
             bool found = false;
@@ -231,6 +238,7 @@ void runCommandMode(int argc, char* argv[]) {
     else if (command == "test_treap") TestMyTreap::run_all_tests();
     else if (command == "test_setpro") TestMySetPro::run_all_tests();
     else if (command == "test_mappro") TestMyMapPro::run_all_tests();
+    else if (command == "test_disjointset") TestMyDisjointSet::run_all_tests();
     else if (command == "test_all") {
         run_all_tests_sequentially();
         return; // all tests 模式自己管理摘要，所以提前退出

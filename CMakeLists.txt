@@ -56,5 +56,8 @@ add_executable(MySTL
         tests/mysetpro/test_mysetpro.cpp
         tests/mymappro/test_mymappro.h
         tests/mymappro/test_mymappro.cpp
+        include/MyDisjointSet.h
+        tests/mydisjointset/test_mydisjointset.cpp
+        tests/mydisjointset/test_mydisjointset.h
         # 未来可以添加：tests/mylist/test_mylist.cpp
 )

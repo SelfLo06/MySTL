@@ -351,7 +351,7 @@ MyLinkedList<T>::MyLinkedList()
     // 思考：一个空的链表，它的 head, tail, size 应该是什么？
     : _head(nullptr), _tail(nullptr), _size(0)
 {
-    std::cout << "LinkedList default constructor called!" << std::endl;
+    //std::cout << "LinkedList default constructor called!" << std::endl;
 }
 
 // 拷贝构造函数
@@ -359,7 +359,7 @@ template <typename T>
 MyLinkedList<T>::MyLinkedList(const MyLinkedList& other)
     : _head(nullptr), _tail(nullptr), _size(0)
 {
-    std::cout << "Copy constructor called!" << std::endl;
+    //std::cout << "Copy constructor called!" << std::endl;
     // 遍历 'other' 链表中的每一个节点
     Node* current = other._head;
     while (current != nullptr) {
@@ -371,7 +371,7 @@ MyLinkedList<T>::MyLinkedList(const MyLinkedList& other)
 // 拷贝赋值运算符
 template <typename T>
 MyLinkedList<T>& MyLinkedList<T>::operator=(const MyLinkedList& other) {
-    std::cout << "Copy assignment operator called!" << std::endl;
+    //std::cout << "Copy assignment operator called!" << std::endl;
 
     // 步骤 1: 检查自我赋值
     if (this == &other) {
@@ -397,7 +397,7 @@ MyLinkedList<T>& MyLinkedList<T>::operator=(const MyLinkedList& other) {
 // 析构函数 (非常重要！)
 template <typename T>
 MyLinkedList<T>::~MyLinkedList() {
-    std::cout << "LinkedList destructor called!" << std::endl;
+    //std::cout << "LinkedList destructor called!" << std::endl;
 
     // 思考：如何安全地释放所有节点，防止内存泄漏？
     // 需要从头到尾遍历，并一个个 delete 掉节点。
